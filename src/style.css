@@ -1,0 +1,46 @@
+@keyframes animate {
+  0% {
+    background-color: red;
+    left: 0px;
+    top: 0px;
+  }
+  25% {
+    background-color: yellow;
+    left: 200px;
+    top: 0px;
+  }
+  50% {
+    background-color: blue;
+    left: 200px;
+    top: 200px;
+  }
+  75% {
+    background-color: green;
+    left: 0px;
+    top: 200px;
+  }
+  100% {
+    background-color: red;
+    left: 0px;
+    top: 0px;
+  }
+}
+
+.animation {
+  position: fixed;
+  z-index: 51;
+  top: 48px;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(238, 238, 238, 0.96);
+  display: none;
+  animation-name: animate;
+  animation-duration: 4s;
+}
+
+.show {
+  display: block;
+}
