@@ -6,8 +6,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 // Webpack Config
 module.exports = {
   entry: {
-    'app': './src/main.ts',
-    'vendor': [ 'rxjs', 'tslib' ]
+    'app': './src/main.tsx',
+    'vendor': [ 'rxjs', 'tslib', 'react', 'react-dom', 'redux', 'redux-observable', 'react-redux', 'redux-actions' ]
   },
 
   output: {
