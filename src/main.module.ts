@@ -1,9 +1,12 @@
 import 'rxjs/add/observable/fromEvent'
 import 'rxjs/add/observable/of'
+import 'rxjs/add/observable/merge'
 import 'rxjs/add/operator/map'
 import 'rxjs/add/operator/mapTo'
 import 'rxjs/add/operator/merge'
 import 'rxjs/add/operator/mergeMap'
+import 'rxjs/add/operator/concatMap'
+import 'rxjs/add/operator/delay'
 import 'rxjs/add/operator/do'
 import 'rxjs/add/operator/delayWhen'
 import 'rxjs/add/operator/filter'
@@ -24,7 +27,7 @@ export const mainReducer = handleActions({
   [COMPUTE_END.toString()]: (state, props) => {
     return { ...state, ...props.payload }
   }
-}, {})
+}, null)
 
 const clickEpic = (action$: ActionsObservable<Action<any>>) => {
   return action$
@@ -32,27 +35,19 @@ const clickEpic = (action$: ActionsObservable<Action<any>>) => {
     .map(() => START_COMPUTE({ animation: 'show' }))
 }
 
-const ux$ = ($animationElement: Element) => {
-  console.log($animationElement)
-  return Observable.of(true)
-    .merge(
-      Observable.fromEvent($animationElement, 'animationend')
-        .do(v => {
-          console.log(v)
-        })
+const ux$ = Observable.of(true)
+  .delay(10)
+  .concatMap(() => {
+    const $animationElement = document.querySelector('.animation')
+    return Observable.merge(
+      Observable.fromEvent($animationElement!, 'animationstart')
+        .mapTo(false),
+      Observable.fromEvent($animationElement!, 'animationend')
         .mapTo(true),
-      Observable.fromEvent($animationElement, 'animationstart')
-        .do(v => {
-          console.log(v)
-        })
-        .mapTo(false)
     )
-    .publish()
-    .refCount()
-    .do(v => {
-      console.log(v)
-    })
-}
+  })
+  .publish()
+  .refCount()
 
 const compute$ = Observable.create((observer: Observer<null>) => {
   let result = Object.create(null)
@@ -69,7 +64,6 @@ const compute$ = Observable.create((observer: Observer<null>) => {
 const startComputeEpic = (action$: ActionsObservable<Action<any>>) => {
   return action$
     .ofType(START_COMPUTE.toString())
-    .delayWhen(() => ux$(document.querySelector('.animation')!).filter(v => v))
     .flatMap(() => compute$)
     .map(() => COMPUTE_END({ animation: 'hide' }))
 }
